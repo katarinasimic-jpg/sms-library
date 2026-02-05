@@ -4,498 +4,767 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SMS Campaign Dashboard</title>
-  
-  <!-- Google Fonts - DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- React -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
-  <!-- Recharts -->
-  <script src="https://unpkg.com/recharts@2.10.3/umd/Recharts.min.js"></script>
-  
-  <!-- Babel for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
   <style>
-    * { font-family: 'DM Sans', sans-serif; }
-    body { margin: 0; padding: 0; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'DM Sans', sans-serif;
+    }
+    body {
+      background: linear-gradient(180deg, #f5f6f8 0%, #ffffff 100%);
+      min-height: 100vh;
+    }
+    .dashboard-container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .header {
+      background: #141414;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 20px 24px;
+    }
+    .header-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .header p {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+    .header-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .tag {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .tag-green { background: #e6fff0; color: #00C853; }
+    .tag-orange { background: #fff4e6; color: #FF8C00; }
+    .tag-purple { background: #f3e8ff; color: #8B5CF6; }
+    
+    /* Main Content */
+    .main-content {
+      padding: 32px 24px;
+    }
+    
+    /* Metric Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+    }
+    .metric-card.default { background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); }
+    .metric-card.blue { background: linear-gradient(135deg, #e8f4ff 0%, #ffffff 100%); border-color: rgba(3, 117, 255, 0.12); }
+    .metric-card.green { background: linear-gradient(135deg, #e6fff0 0%, #ffffff 100%); border-color: rgba(0, 200, 83, 0.12); }
+    .metric-card.orange { background: linear-gradient(135deg, #fff4e6 0%, #ffffff 100%); border-color: rgba(255, 140, 0, 0.12); }
+    .metric-card.purple { background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%); border-color: rgba(139, 92, 246, 0.12); }
+    
+    .metric-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: #5b6a7c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .metric-value.default { color: #141414; }
+    .metric-value.blue { color: #0375FF; }
+    .metric-value.green { color: #00C853; }
+    .metric-value.orange { color: #FF8C00; }
+    .metric-value.purple { color: #8B5CF6; }
+    
+    .metric-subtitle {
+      font-size: 13px;
+      color: #8b95a5;
+      margin-top: 4px;
+    }
+    
+    /* Section Title */
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #141414;
+      margin-top: 48px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid rgba(3, 117, 255, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    /* Chart Cards */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .chart-card {
+      background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+      border-radius: 24px;
+      border: 1px solid #e5e7eb;
+      padding: 24px;
+    }
+    .chart-card.full-width {
+      grid-column: 1 / -1;
+    }
+    .chart-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #141414;
+      margin-bottom: 20px;
+    }
+    .chart-wrapper {
+      position: relative;
+      height: 280px;
+    }
+    .chart-wrapper.tall {
+      height: 320px;
+    }
+    
+    /* Emoji Grid */
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .emoji-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+    }
+    .emoji-icon {
+      font-size: 24px;
+    }
+    .emoji-name {
+      font-weight: 500;
+      font-size: 14px;
+      color: #141414;
+    }
+    .emoji-count {
+      font-size: 12px;
+      color: #8b95a5;
+      margin-top: 2px;
+    }
+    
+    /* Footer */
+    .footer {
+      background: #141414;
+      border-top: 1px solid #2d2d2d;
+      margin-top: 48px;
+      padding: 24px;
+      text-align: center;
+    }
+    .footer p {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 280px;
+      color: #8b95a5;
+    }
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  
-  <script type="text/babel">
-    const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } = Recharts;
 
-    const COLORS = ['#0375FF', '#00C2FF', '#00E5A0', '#FFB800', '#FF6B6B', '#A855F7', '#14B8A6', '#F97316', '#EC4899', '#8B5CF6', '#06B6D4', '#22C55E'];
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div>
+        <h1>📱 SMS Campaign Dashboard</h1>
+        <p>16,270 messages • Mar 2025 - Jan 2026</p>
+      </div>
+      <div class="header-tags">
+        <span class="tag tag-green">49.9% Discount</span>
+        <span class="tag tag-orange">53.0% Urgency</span>
+        <span class="tag tag-purple">26.5% Promo Code</span>
+      </div>
+    </div>
+  </div>
 
-    function SMSDashboard() {
-      const TOTAL = 16270;
-
-      // All data
-      const discountTypes = [
-        { name: 'Percentage Off (%)', count: 7317, pct: 45.0 },
-        { name: 'Up to X% Off', count: 1648, pct: 10.1 },
-        { name: 'BOGO', count: 415, pct: 2.6 },
-        { name: 'Dollar Off ($)', count: 395, pct: 2.4 },
-        { name: 'Free Item/Gift', count: 386, pct: 2.4 },
-        { name: 'Tiered Discount', count: 106, pct: 0.7 },
-      ];
-
-      const discountRanges = [
-        { range: '5-10%', count: 610, pct: 6.6 },
-        { range: '11-20%', count: 2478, pct: 26.6 },
-        { range: '21-30%', count: 2713, pct: 29.2 },
-        { range: '31-40%', count: 1158, pct: 12.5 },
-        { range: '41-50%', count: 1255, pct: 13.5 },
-        { range: '51-60%', count: 503, pct: 5.4 },
-        { range: '61-70%', count: 373, pct: 4.0 },
-        { range: '71%+', count: 210, pct: 2.3 },
-      ];
-
-      const topPercentages = [
-        { discount: '20%', count: 1611 },
-        { discount: '30%', count: 1463 },
-        { discount: '25%', count: 1200 },
-        { discount: '50%', count: 1150 },
-        { discount: '15%', count: 831 },
-        { discount: '40%', count: 797 },
-        { discount: '10%', count: 574 },
-        { discount: '60%', count: 419 },
-      ];
-
-      const incentiveTypes = [
-        { name: 'Discount Code', count: 4307, pct: 26.5 },
-        { name: 'Sitewide Sale', count: 1914, pct: 11.8 },
-        { name: 'Bundle Deal', count: 1352, pct: 8.3 },
-        { name: 'VIP/Member', count: 1255, pct: 7.7 },
-        { name: 'Limited Time', count: 704, pct: 4.3 },
-        { name: 'Free Shipping', count: 461, pct: 2.8 },
-        { name: 'BOGO', count: 415, pct: 2.6 },
-        { name: 'Flash Sale', count: 298, pct: 1.8 },
-      ];
-
-      const urgencyCategories = [
-        { name: 'Action words', count: 5146, pct: 31.6 },
-        { name: 'Time-limited', count: 4588, pct: 28.2 },
-        { name: 'FOMO triggers', count: 1591, pct: 9.8 },
-        { name: 'Countdown', count: 725, pct: 4.5 },
-        { name: 'Scarcity', count: 419, pct: 2.6 },
-      ];
-
-      const urgencyDetails = [
-        { name: 'Last Day/Chance', count: 1276, pct: 7.8 },
-        { name: "Don't Miss", count: 1017, pct: 6.3 },
-        { name: 'Ends Today', count: 800, pct: 4.9 },
-        { name: 'Hurry/Rush', count: 576, pct: 3.5 },
-        { name: 'Final Hours', count: 436, pct: 2.7 },
-        { name: 'Today Only', count: 334, pct: 2.1 },
-      ];
-
-      const messageTypes = [
-        { name: 'Sale/Promotion', count: 8917, pct: 54.8 },
-        { name: 'Holiday/Seasonal', count: 2937, pct: 18.1 },
-        { name: 'Review/Social Proof', count: 1298, pct: 8.0 },
-        { name: 'New Product', count: 1241, pct: 7.6 },
-        { name: 'VIP/Loyalty', count: 949, pct: 5.8 },
-        { name: 'Welcome', count: 676, pct: 4.2 },
-      ];
-
-      const dayOfWeek = [
-        { day: 'Mon', count: 2391, pct: 14.7 },
-        { day: 'Tue', count: 2140, pct: 13.2 },
-        { day: 'Wed', count: 2336, pct: 14.4 },
-        { day: 'Thu', count: 2249, pct: 13.8 },
-        { day: 'Fri', count: 3056, pct: 18.8 },
-        { day: 'Sat', count: 2039, pct: 12.5 },
-        { day: 'Sun', count: 2059, pct: 12.7 },
-      ];
-
-      const monthlyTrends = [
-        { month: 'Mar 25', count: 1634 },
-        { month: 'Apr 25', count: 1729 },
-        { month: 'May 25', count: 1740 },
-        { month: 'Jun 25', count: 1350 },
-        { month: 'Jul 25', count: 1427 },
-        { month: 'Aug 25', count: 838 },
-        { month: 'Sep 25', count: 1098 },
-        { month: 'Oct 25', count: 1232 },
-        { month: 'Nov 25', count: 1839 },
-        { month: 'Dec 25', count: 2028 },
-        { month: 'Jan 26', count: 1355 },
-      ];
-
-      const holidays = [
-        { name: 'Gifting', count: 1222 },
-        { name: 'Black Friday', count: 663 },
-        { name: 'Christmas', count: 336 },
-        { name: 'New Year', count: 301 },
-        { name: 'Memorial Day', count: 263 },
-        { name: 'Cyber Monday', count: 231 },
-      ];
-
-      const ctas = [
-        { name: 'Shop Now', count: 3724 },
-        { name: "Don't Miss", count: 1017 },
-        { name: 'Grab/Snag', count: 828 },
-        { name: 'Limited Time', count: 396 },
-        { name: 'Hurry', count: 383 },
-        { name: 'Stock Up', count: 373 },
-      ];
-
-      const emojis = [
-        { emoji: '✨', name: 'Sparkles', count: 200, pct: 8.9 },
-        { emoji: '🚨', name: 'Alert', count: 164, pct: 7.3 },
-        { emoji: '👉', name: 'Point', count: 125, pct: 5.6 },
-        { emoji: '🔥', name: 'Fire', count: 116, pct: 5.2 },
-        { emoji: '🎁', name: 'Gift', count: 109, pct: 4.9 },
-        { emoji: '🎉', name: 'Party', count: 103, pct: 4.6 },
-      ];
-
-      const tone = [
-        { name: 'Excitement (!)', count: 9989, pct: 61.4 },
-        { name: 'Questions (?)', count: 2317, pct: 14.2 },
-        { name: 'FOMO', count: 1352, pct: 8.3 },
-        { name: 'Trust', count: 756, pct: 4.6 },
-        { name: 'Exclusive', count: 671, pct: 4.1 },
-      ];
-
-      const personalization = [
-        { name: 'You/Your', count: 7545, pct: 46.4 },
-        { name: 'We/Our', count: 4478, pct: 27.5 },
-        { name: 'First Name', count: 721, pct: 4.4 },
-        { name: 'Past Purchase', count: 587, pct: 3.6 },
-        { name: 'VIP/Member', count: 492, pct: 3.0 },
-      ];
-
-      const topBrands = [
-        { name: 'originalsoegear.com', count: 323 },
-        { name: 'diffeyewear.com', count: 300 },
-        { name: 'langehair.com', count: 249 },
-        { name: 'bodycandy.com', count: 214 },
-        { name: 'goosecreekcandle.com', count: 193 },
-        { name: 'patrickadairdesigns.com', count: 170 },
-        { name: 'sigmabeauty.com', count: 165 },
-        { name: 'officialhodgetwins.com', count: 156 },
-      ];
-
-      const segments = [
-        { name: '1 segment', count: 9270, pct: 57.0 },
-        { name: '2 segments', count: 5208, pct: 32.0 },
-        { name: '3 segments', count: 1302, pct: 8.0 },
-        { name: '4+ segments', count: 490, pct: 3.0 },
-      ];
-
-      const productCategories = [
-        { name: 'Fashion', count: 1921, pct: 11.8 },
-        { name: 'Beauty', count: 1725, pct: 10.6 },
-        { name: 'Food & Bev', count: 1510, pct: 9.3 },
-        { name: 'Accessories', count: 1298, pct: 8.0 },
-        { name: 'Home', count: 1189, pct: 7.3 },
-        { name: 'Wellness', count: 1087, pct: 6.7 },
-        { name: 'Hair Care', count: 982, pct: 6.0 },
-        { name: 'Pet', count: 756, pct: 4.6 },
-      ];
-
-      const combos = [
-        { name: 'Discount + Urgency', count: 6997, pct: 43.0 },
-        { name: 'No Discount', count: 8137, pct: 50.0 },
-        { name: 'Discount + Code', count: 3579, pct: 22.0 },
-        { name: 'Urgency + Code', count: 2603, pct: 16.0 },
-        { name: 'All Three', count: 2114, pct: 13.0 },
-      ];
-
-      // Components
-      const MetricCard = ({ title, value, subtitle, variant = 'default' }) => {
-        const variants = {
-          default: { bg: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)', color: '#141414', border: '#e5e7eb' },
-          blue: { bg: 'linear-gradient(135deg, #e8f4ff 0%, #ffffff 100%)', color: '#0375FF', border: '#0375FF20' },
-          green: { bg: 'linear-gradient(135deg, #e6fff0 0%, #ffffff 100%)', color: '#00C853', border: '#00C85320' },
-          orange: { bg: 'linear-gradient(135deg, #fff4e6 0%, #ffffff 100%)', color: '#FF8C00', border: '#FF8C0020' },
-          purple: { bg: 'linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%)', color: '#8B5CF6', border: '#8B5CF620' },
-        };
-        const v = variants[variant];
-        return (
-          <div style={{ background: v.bg, borderRadius: '16px', border: `1px solid ${v.border}`, padding: '20px' }}>
-            <p style={{ fontSize: '12px', fontWeight: 500, color: '#5b6a7c', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>{title}</p>
-            <p style={{ fontSize: '28px', fontWeight: 700, color: v.color, marginTop: '8px', marginBottom: 0 }}>{value}</p>
-            {subtitle && <p style={{ fontSize: '13px', color: '#8b95a5', marginTop: '4px', marginBottom: 0 }}>{subtitle}</p>}
-          </div>
-        );
-      };
-
-      const ChartCard = ({ title, children }) => (
-        <div style={{ background: 'linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%)', borderRadius: '24px', border: '1px solid #e5e7eb', padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#141414', marginBottom: '20px', marginTop: 0 }}>{title}</h3>
-          {children}
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="dashboard-container">
+      
+      <!-- Overview Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card default">
+          <div class="metric-title">Total Messages</div>
+          <div class="metric-value default">16,270</div>
+          <div class="metric-subtitle">Mar 2025 - Jan 2026</div>
         </div>
-      );
+        <div class="metric-card green">
+          <div class="metric-title">With Discount</div>
+          <div class="metric-value green">49.9%</div>
+          <div class="metric-subtitle">8,133 msgs</div>
+        </div>
+        <div class="metric-card orange">
+          <div class="metric-title">With Urgency</div>
+          <div class="metric-value orange">53.0%</div>
+          <div class="metric-subtitle">8,623 msgs</div>
+        </div>
+        <div class="metric-card purple">
+          <div class="metric-title">With Promo Code</div>
+          <div class="metric-value purple">26.5%</div>
+          <div class="metric-subtitle">4,307 msgs</div>
+        </div>
+        <div class="metric-card blue">
+          <div class="metric-title">With Emoji</div>
+          <div class="metric-value blue">13.7%</div>
+          <div class="metric-subtitle">2,236 msgs</div>
+        </div>
+      </div>
 
-      const SectionTitle = ({ icon, children }) => (
-        <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#141414', marginTop: '48px', marginBottom: '20px', paddingBottom: '12px', borderBottom: '2px solid #0375FF20', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span>{icon}</span> {children}
-        </h2>
-      );
+      <!-- Overview Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Message Types</h3>
+          <div class="chart-wrapper">
+            <canvas id="messageTypesChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Monthly Volume</h3>
+          <div class="chart-wrapper">
+            <canvas id="monthlyVolumeChart"></canvas>
+          </div>
+        </div>
+      </div>
 
-      const Tag = ({ children, variant = 'blue' }) => {
-        const colors = {
-          blue: { bg: '#e8f4ff', text: '#0375FF' },
-          green: { bg: '#e6fff0', text: '#00C853' },
-          orange: { bg: '#fff4e6', text: '#FF8C00' },
-          purple: { bg: '#f3e8ff', text: '#8B5CF6' },
-        };
-        const c = colors[variant];
-        return (
-          <span style={{ padding: '6px 14px', backgroundColor: c.bg, color: c.text, borderRadius: '6px', fontSize: '14px', fontWeight: 500 }}>
-            {children}
-          </span>
-        );
-      };
+      <!-- Discounts Section -->
+      <h2 class="section-title"><span>💰</span> Discounts Analysis</h2>
+      <div class="metrics-grid">
+        <div class="metric-card green">
+          <div class="metric-title">With Discount</div>
+          <div class="metric-value green">49.9%</div>
+          <div class="metric-subtitle">8,133 messages</div>
+        </div>
+        <div class="metric-card default">
+          <div class="metric-title">Most Common</div>
+          <div class="metric-value default">20% off</div>
+          <div class="metric-subtitle">1,611 uses</div>
+        </div>
+        <div class="metric-card purple">
+          <div class="metric-title">Sweet Spot</div>
+          <div class="metric-value purple">21-30%</div>
+          <div class="metric-subtitle">29.2% of all</div>
+        </div>
+        <div class="metric-card orange">
+          <div class="metric-title">BOGO Offers</div>
+          <div class="metric-value orange">415</div>
+          <div class="metric-subtitle">2.6% of msgs</div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Discount Types</h3>
+          <div class="chart-wrapper">
+            <canvas id="discountTypesChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Discount Ranges</h3>
+          <div class="chart-wrapper">
+            <canvas id="discountRangesChart"></canvas>
+          </div>
+        </div>
+      </div>
 
-      return (
-        <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f5f6f8 0%, #ffffff 100%)' }}>
-          {/* Header */}
-          <div style={{ background: '#141414', position: 'sticky', top: 0, zIndex: 20 }}>
-            <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px 24px' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-                <div>
-                  <h1 style={{ fontSize: '26px', fontWeight: 700, color: '#ffffff', margin: 0 }}>📱 SMS Campaign Dashboard</h1>
-                  <p style={{ fontSize: '14px', color: '#9ca3af', margin: '4px 0 0' }}>16,270 messages • Mar 2025 - Jan 2026</p>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                  <Tag variant="green">49.9% Discount</Tag>
-                  <Tag variant="orange">53.0% Urgency</Tag>
-                  <Tag variant="purple">26.5% Promo Code</Tag>
-                </div>
+      <!-- Urgency Section -->
+      <h2 class="section-title"><span>⏰</span> Urgency Tactics</h2>
+      <div class="metrics-grid">
+        <div class="metric-card orange">
+          <div class="metric-title">With Urgency</div>
+          <div class="metric-value orange">53.0%</div>
+          <div class="metric-subtitle">8,623 messages</div>
+        </div>
+        <div class="metric-card default">
+          <div class="metric-title">Action Words</div>
+          <div class="metric-value default">31.6%</div>
+          <div class="metric-subtitle">Most common</div>
+        </div>
+        <div class="metric-card purple">
+          <div class="metric-title">FOMO Triggers</div>
+          <div class="metric-value purple">9.8%</div>
+          <div class="metric-subtitle">1,591 msgs</div>
+        </div>
+        <div class="metric-card blue">
+          <div class="metric-title">Scarcity</div>
+          <div class="metric-value blue">2.6%</div>
+          <div class="metric-subtitle">419 msgs</div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Urgency Categories</h3>
+          <div class="chart-wrapper">
+            <canvas id="urgencyCategoriesChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Specific Urgency Phrases</h3>
+          <div class="chart-wrapper">
+            <canvas id="urgencyPhrasesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timing Section -->
+      <h2 class="section-title"><span>📅</span> Timing & Trends</h2>
+      <div class="metrics-grid">
+        <div class="metric-card blue">
+          <div class="metric-title">Peak Day</div>
+          <div class="metric-value blue">Friday</div>
+          <div class="metric-subtitle">18.8% - 3,056 msgs</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-title">Peak Month</div>
+          <div class="metric-value green">Dec 2025</div>
+          <div class="metric-subtitle">12.5% - 2,028 msgs</div>
+        </div>
+        <div class="metric-card default">
+          <div class="metric-title">Slowest Day</div>
+          <div class="metric-value default">Saturday</div>
+          <div class="metric-subtitle">12.5% - 2,039 msgs</div>
+        </div>
+        <div class="metric-card purple">
+          <div class="metric-title">Avg Length</div>
+          <div class="metric-value purple">192 chars</div>
+          <div class="metric-subtitle">Median: 158</div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Day of Week Distribution</h3>
+          <div class="chart-wrapper">
+            <canvas id="dayOfWeekChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Monthly Trend</h3>
+          <div class="chart-wrapper">
+            <canvas id="monthlyTrendChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engagement Section -->
+      <h2 class="section-title"><span>💬</span> Engagement & CTAs</h2>
+      <div class="metrics-grid">
+        <div class="metric-card green">
+          <div class="metric-title">Emoji Usage</div>
+          <div class="metric-value green">13.7%</div>
+          <div class="metric-subtitle">2,236 msgs</div>
+        </div>
+        <div class="metric-card orange">
+          <div class="metric-title">Excitement (!)</div>
+          <div class="metric-value orange">61.4%</div>
+          <div class="metric-subtitle">9,989 msgs</div>
+        </div>
+        <div class="metric-card default">
+          <div class="metric-title">Questions (?)</div>
+          <div class="metric-value default">14.2%</div>
+          <div class="metric-subtitle">2,317 msgs</div>
+        </div>
+        <div class="metric-card purple">
+          <div class="metric-title">Personalization</div>
+          <div class="metric-value purple">46.4%</div>
+          <div class="metric-subtitle">You/Your</div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Call-to-Actions</h3>
+          <div class="chart-wrapper">
+            <canvas id="ctaChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Top Emojis</h3>
+          <div class="emoji-grid">
+            <div class="emoji-item">
+              <span class="emoji-icon">✨</span>
+              <div>
+                <div class="emoji-name">Sparkles</div>
+                <div class="emoji-count">200 (8.9%)</div>
+              </div>
+            </div>
+            <div class="emoji-item">
+              <span class="emoji-icon">🚨</span>
+              <div>
+                <div class="emoji-name">Alert</div>
+                <div class="emoji-count">164 (7.3%)</div>
+              </div>
+            </div>
+            <div class="emoji-item">
+              <span class="emoji-icon">👉</span>
+              <div>
+                <div class="emoji-name">Point</div>
+                <div class="emoji-count">125 (5.6%)</div>
+              </div>
+            </div>
+            <div class="emoji-item">
+              <span class="emoji-icon">🔥</span>
+              <div>
+                <div class="emoji-name">Fire</div>
+                <div class="emoji-count">116 (5.2%)</div>
+              </div>
+            </div>
+            <div class="emoji-item">
+              <span class="emoji-icon">🎁</span>
+              <div>
+                <div class="emoji-name">Gift</div>
+                <div class="emoji-count">109 (4.9%)</div>
+              </div>
+            </div>
+            <div class="emoji-item">
+              <span class="emoji-icon">🎉</span>
+              <div>
+                <div class="emoji-name">Party</div>
+                <div class="emoji-count">103 (4.6%)</div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Content */}
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px' }}>
-            
-            {/* Overview */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-              <MetricCard title="Total Messages" value="16,270" subtitle="Mar 2025 - Jan 2026" />
-              <MetricCard title="With Discount" value="49.9%" subtitle="8,133 msgs" variant="green" />
-              <MetricCard title="With Urgency" value="53.0%" subtitle="8,623 msgs" variant="orange" />
-              <MetricCard title="With Promo Code" value="26.5%" subtitle="4,307 msgs" variant="purple" />
-              <MetricCard title="With Emoji" value="13.7%" subtitle="2,236 msgs" variant="blue" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '24px' }}>
-              <ChartCard title="Message Types">
-                <ResponsiveContainer width="100%" height={280}>
-                  <PieChart>
-                    <Pie data={messageTypes} dataKey="count" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={({pct}) => `${pct}%`}>
-                      {messageTypes.map((e, i) => <Cell key={i} fill={COLORS[i]} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartCard>
-
-              <ChartCard title="Monthly Volume">
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={monthlyTrends}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="month" tick={{fontSize: 10}} />
-                    <YAxis tick={{fontSize: 12}} />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Bar dataKey="count" fill="#0375FF" radius={[6,6,0,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
-            </div>
-
-            {/* Discounts */}
-            <SectionTitle icon="💰">Discounts Analysis</SectionTitle>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-              <MetricCard title="With Discount" value="49.9%" subtitle="8,133 messages" variant="green" />
-              <MetricCard title="Most Common" value="20% off" subtitle="1,611 uses" />
-              <MetricCard title="Sweet Spot" value="21-30%" subtitle="29.2% of all" variant="purple" />
-              <MetricCard title="BOGO Offers" value="415" subtitle="2.6% of msgs" variant="orange" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '24px' }}>
-              <ChartCard title="Discount Types">
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={discountTypes} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={120} tick={{fontSize: 11}} />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Bar dataKey="count" fill="#00C853" radius={[0,6,6,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
-
-              <ChartCard title="Discount Ranges">
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={discountRanges}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="range" tick={{fontSize: 11}} />
-                    <YAxis />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Bar dataKey="count" fill="#0375FF" radius={[6,6,0,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
-            </div>
-
-            {/* Urgency */}
-            <SectionTitle icon="⏰">Urgency Tactics</SectionTitle>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-              <MetricCard title="With Urgency" value="53.0%" subtitle="8,623 messages" variant="orange" />
-              <MetricCard title="Action Words" value="31.6%" subtitle="Most common" />
-              <MetricCard title="FOMO Triggers" value="9.8%" subtitle="1,591 msgs" variant="purple" />
-              <MetricCard title="Scarcity" value="2.6%" subtitle="419 msgs" variant="blue" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '24px' }}>
-              <ChartCard title="Urgency Categories">
-                <ResponsiveContainer width="100%" height={280}>
-                  <PieChart>
-                    <Pie data={urgencyCategories} dataKey="count" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={({pct}) => `${pct}%`}>
-                      {urgencyCategories.map((e, i) => <Cell key={i} fill={['#FF8C00','#FFB347','#FFD699','#FFE4B5','#FFF8DC'][i]} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartCard>
-
-              <ChartCard title="Specific Urgency Phrases">
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={urgencyDetails} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={100} tick={{fontSize: 11}} />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Bar dataKey="count" fill="#FF8C00" radius={[0,6,6,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
-            </div>
-
-            {/* Timing */}
-            <SectionTitle icon="📅">Timing & Trends</SectionTitle>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-              <MetricCard title="Peak Day" value="Friday" subtitle="18.8% - 3,056 msgs" variant="blue" />
-              <MetricCard title="Peak Month" value="Dec 2025" subtitle="12.5% - 2,028 msgs" variant="green" />
-              <MetricCard title="Slowest Day" value="Saturday" subtitle="12.5% - 2,039 msgs" />
-              <MetricCard title="Avg Length" value="192 chars" subtitle="Median: 158" variant="purple" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '24px' }}>
-              <ChartCard title="Day of Week Distribution">
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={dayOfWeek}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip formatter={(v,n,p) => [`${v.toLocaleString()} (${p.payload.pct}%)`, 'Messages']} contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Bar dataKey="count" fill="#8B5CF6" radius={[6,6,0,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
-
-              <ChartCard title="Monthly Trend">
-                <ResponsiveContainer width="100%" height={260}>
-                  <LineChart data={monthlyTrends}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="month" tick={{fontSize: 10}} />
-                    <YAxis />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Line type="monotone" dataKey="count" stroke="#0375FF" strokeWidth={3} dot={{fill:'#0375FF',r:5}} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartCard>
-            </div>
-
-            {/* Engagement */}
-            <SectionTitle icon="💬">Engagement & CTAs</SectionTitle>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-              <MetricCard title="Emoji Usage" value="13.7%" subtitle="2,236 msgs" variant="green" />
-              <MetricCard title="Excitement (!)" value="61.4%" subtitle="9,989 msgs" variant="orange" />
-              <MetricCard title="Questions (?)" value="14.2%" subtitle="2,317 msgs" />
-              <MetricCard title="Personalization" value="46.4%" subtitle="You/Your" variant="purple" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '24px' }}>
-              <ChartCard title="Call-to-Actions">
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={ctas}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="name" tick={{fontSize: 10}} />
-                    <YAxis />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Bar dataKey="count" fill="#00C853" radius={[6,6,0,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
-
-              <ChartCard title="Top Emojis">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  {emojis.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                      <span style={{ fontSize: '24px' }}>{item.emoji}</span>
-                      <div>
-                        <p style={{ fontWeight: 500, fontSize: '14px', color: '#141414', margin: 0 }}>{item.name}</p>
-                        <p style={{ fontSize: '12px', color: '#8b95a5', margin: '2px 0 0' }}>{item.count} ({item.pct}%)</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ChartCard>
-            </div>
-
-            {/* Brands */}
-            <SectionTitle icon="🏢">Top Brands</SectionTitle>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-              <MetricCard title="Top Brand" value="SOE Gear" subtitle="323 messages" variant="purple" />
-              <MetricCard title="#2 Brand" value="Diff Eyewear" subtitle="300 messages" variant="blue" />
-              <MetricCard title="#3 Brand" value="L'ange Hair" subtitle="249 messages" variant="green" />
-            </div>
-
-            <div style={{ marginTop: '24px' }}>
-              <ChartCard title="Top 8 Brands">
-                <ResponsiveContainer width="100%" height={320}>
-                  <BarChart data={topBrands} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={180} tick={{fontSize: 11}} />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }} />
-                    <Bar dataKey="count" fill="#0375FF" radius={[0,6,6,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
-            </div>
-
-          </div>
-
-          {/* Footer */}
-          <div style={{ background: '#141414', borderTop: '1px solid #2d2d2d', marginTop: '48px' }}>
-            <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px', textAlign: 'center' }}>
-              <p style={{ fontSize: '14px', color: '#9ca3af', margin: 0 }}>
-                SMS Campaign Analysis • 16,270 messages • Mar 2025 - Jan 2026
-              </p>
-            </div>
+      <!-- Brands Section -->
+      <h2 class="section-title"><span>🏢</span> Top Brands</h2>
+      <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="metric-card purple">
+          <div class="metric-title">Top Brand</div>
+          <div class="metric-value purple">SOE Gear</div>
+          <div class="metric-subtitle">323 messages</div>
+        </div>
+        <div class="metric-card blue">
+          <div class="metric-title">#2 Brand</div>
+          <div class="metric-value blue">Diff Eyewear</div>
+          <div class="metric-subtitle">300 messages</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-title">#3 Brand</div>
+          <div class="metric-value green">L'ange Hair</div>
+          <div class="metric-subtitle">249 messages</div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card full-width">
+          <h3>Top 8 Brands</h3>
+          <div class="chart-wrapper tall">
+            <canvas id="topBrandsChart"></canvas>
           </div>
         </div>
-      );
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>SMS Campaign Analysis • 16,270 messages • Mar 2025 - Jan 2026</p>
+  </div>
+
+  <!-- Load Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <script>
+    // Wait for Chart.js to load
+    function initCharts() {
+      if (typeof Chart === 'undefined') {
+        console.error('Chart.js not loaded');
+        return;
+      }
+
+      // Chart.js global defaults
+      Chart.defaults.font.family = "'DM Sans', sans-serif";
+      Chart.defaults.color = '#5b6a7c';
+      
+      var COLORS = ['#0375FF', '#00C2FF', '#00E5A0', '#FFB800', '#FF6B6B', '#A855F7', '#14B8A6', '#F97316'];
+      var ORANGE_GRADIENT = ['#FF8C00', '#FFB347', '#FFD699', '#FFE4B5', '#FFF8DC'];
+
+      // Message Types Pie Chart
+      new Chart(document.getElementById('messageTypesChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Sale/Promotion', 'Holiday/Seasonal', 'Review/Social Proof', 'New Product', 'VIP/Loyalty', 'Welcome'],
+          datasets: [{
+            data: [8917, 2937, 1298, 1241, 949, 676],
+            backgroundColor: COLORS,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { padding: 15, usePointStyle: true } }
+          }
+        }
+      });
+
+      // Monthly Volume Bar Chart
+      new Chart(document.getElementById('monthlyVolumeChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Mar 25', 'Apr 25', 'May 25', 'Jun 25', 'Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26'],
+          datasets: [{
+            data: [1634, 1729, 1740, 1350, 1427, 838, 1098, 1232, 1839, 2028, 1355],
+            backgroundColor: '#0375FF',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#e5e7eb' }, border: { display: false } }
+          }
+        }
+      });
+
+      // Discount Types Horizontal Bar
+      new Chart(document.getElementById('discountTypesChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Percentage Off (%)', 'Up to X% Off', 'BOGO', 'Dollar Off ($)', 'Free Item/Gift', 'Tiered Discount'],
+          datasets: [{
+            data: [7317, 1648, 415, 395, 386, 106],
+            backgroundColor: '#00C853',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#e5e7eb' }, border: { display: false } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // Discount Ranges Bar
+      new Chart(document.getElementById('discountRangesChart'), {
+        type: 'bar',
+        data: {
+          labels: ['5-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71%+'],
+          datasets: [{
+            data: [610, 2478, 2713, 1158, 1255, 503, 373, 210],
+            backgroundColor: '#0375FF',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#e5e7eb' }, border: { display: false } }
+          }
+        }
+      });
+
+      // Urgency Categories Pie
+      new Chart(document.getElementById('urgencyCategoriesChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Action words', 'Time-limited', 'FOMO triggers', 'Countdown', 'Scarcity'],
+          datasets: [{
+            data: [5146, 4588, 1591, 725, 419],
+            backgroundColor: ORANGE_GRADIENT,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { padding: 15, usePointStyle: true } }
+          }
+        }
+      });
+
+      // Urgency Phrases Horizontal Bar
+      new Chart(document.getElementById('urgencyPhrasesChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Last Day/Chance', "Don't Miss", 'Ends Today', 'Hurry/Rush', 'Final Hours', 'Today Only'],
+          datasets: [{
+            data: [1276, 1017, 800, 576, 436, 334],
+            backgroundColor: '#FF8C00',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#e5e7eb' }, border: { display: false } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // Day of Week Bar
+      new Chart(document.getElementById('dayOfWeekChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            data: [2391, 2140, 2336, 2249, 3056, 2039, 2059],
+            backgroundColor: '#8B5CF6',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#e5e7eb' }, border: { display: false } }
+          }
+        }
+      });
+
+      // Monthly Trend Line
+      new Chart(document.getElementById('monthlyTrendChart'), {
+        type: 'line',
+        data: {
+          labels: ['Mar 25', 'Apr 25', 'May 25', 'Jun 25', 'Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26'],
+          datasets: [{
+            data: [1634, 1729, 1740, 1350, 1427, 838, 1098, 1232, 1839, 2028, 1355],
+            borderColor: '#0375FF',
+            backgroundColor: 'rgba(3, 117, 255, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#0375FF',
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#e5e7eb' }, border: { display: false } }
+          }
+        }
+      });
+
+      // CTA Bar
+      new Chart(document.getElementById('ctaChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Shop Now', "Don't Miss", 'Grab/Snag', 'Limited Time', 'Hurry', 'Stock Up'],
+          datasets: [{
+            data: [3724, 1017, 828, 396, 383, 373],
+            backgroundColor: '#00C853',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#e5e7eb' }, border: { display: false } }
+          }
+        }
+      });
+
+      // Top Brands Horizontal Bar
+      new Chart(document.getElementById('topBrandsChart'), {
+        type: 'bar',
+        data: {
+          labels: ['originalsoegear.com', 'diffeyewear.com', 'langehair.com', 'bodycandy.com', 'goosecreekcandle.com', 'patrickadairdesigns.com', 'sigmabeauty.com', 'officialhodgetwins.com'],
+          datasets: [{
+            data: [323, 300, 249, 214, 193, 170, 165, 156],
+            backgroundColor: '#0375FF',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#e5e7eb' }, border: { display: false } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      console.log('All charts initialized successfully');
     }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<SMSDashboard />);
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initCharts, 100);
+      });
+    } else {
+      setTimeout(initCharts, 100);
+    }
   </script>
+
 </body>
 </html>
